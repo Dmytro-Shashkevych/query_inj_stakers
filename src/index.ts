@@ -28,6 +28,11 @@ async function storeDelegationData(db: Database<sqlite3.Database, sqlite3.Statem
                   VALUES (?, ?, ?)`, [delegatorAddress, validatorAddress, amount]);
 }
 
+
+function delay(ms: number) {
+    return new Promise( resolve => setTimeout(resolve, ms) );
+}
+
 async function getAllDelegationsForValidators(): Promise<void> {
     const db = await openDb();
     await setupDatabase(db);
@@ -56,9 +61,16 @@ async function getAllDelegationsForValidators(): Promise<void> {
         const validatorAddress = validator.operatorAddress;
         console.time(`Fetching delegations for validator ${validatorAddress}`);
 
+        await delay(1000);
+
+
         const delegations = await chainGrpcStakingApi.fetchValidatorDelegationsNoThrow({
             validatorAddress,
         });
+
+        await delay(2000);
+
+
 
         for (let delegation of delegations.delegations) {
             let delegatorAddress = delegation.delegation.delegatorAddress;
@@ -66,6 +78,8 @@ async function getAllDelegationsForValidators(): Promise<void> {
             if (amount != "0") {
                 await storeDelegationData(db, delegatorAddress, validatorAddress, amount);
             }
+            await delay(1000);
+
         }
 
         console.timeEnd(`Fetching delegations for validator ${validatorAddress}`);
