@@ -52,7 +52,7 @@ async function getAllDelegationsForValidators(): Promise<void> {
 
     console.log(`Total number of validators: ${validators.length}`);
 
-    for (let validator of validators.slice(121,142)) {
+    for (let validator of validators) {
         const validatorAddress = validator.operatorAddress;
         console.time(`Fetching delegations for validator ${validatorAddress}`);
 
